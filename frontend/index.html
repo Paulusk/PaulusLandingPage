@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaulusTestGround</title>
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+    <!easy html navigation, using history api>
+    <nav class="nav">
+        <a href="/" class="nav__link" data-link>Dashboard</a>
+        <a href="/tictactoe" class="nav__link" data-link>TicTacToe</a>
+        <a href="/inspiration" class="nav__link" data-link> Inspiration</a>
+    </nav>
+    <!all views will have their own java script class, therefor module>    
+    <!display loaded in html>
+    <div id ="app"></div>
+
+  <script type = "text/javascript"> 
+
+
+// I wanted to put all my functions in the index.js and conect it via "<script type="module" src="/static/js/index.js"> 
+  // however, that did now quite work and i do not understand why. So some functions remain within the html part
+
+  function whyHire() {
+    window.alert("Because he is ambitious, creative and reliable ");
+}
+
+//tictactoe game engine
+
+
+function ticTacToe() {
+    var N_SIZE = 3,
+      EMPTY = '&nbsp;',
+      boxes = [],
+      turn = 'X',
+      score,
+      moves;
+    
+    // Initializing the board and starting game
+     
+    function init() {
+      var board = document.createElement('table');
+      board.setAttribute('border', 1);
+      board.setAttribute('cellspacing', 0);
+    
+      var identifier = 1;
+      for (var i = 0; i < N_SIZE; i++) {
+        var row = document.createElement('tr');
+        board.appendChild(row);
+        for (var j = 0; j < N_SIZE; j++) {
+          var cell = document.createElement('td');
+          cell.setAttribute('height', 120);
+          cell.setAttribute('width', 120);
+          cell.setAttribute('align', 'center');
+          cell.setAttribute('valign', 'center');
+          cell.classList.add('col' + j, 'row' + i);
+          if (i == j) {
+            cell.classList.add('diagonal0');
+          }
+          if (j == N_SIZE - i - 1) {
+            cell.classList.add('diagonal1');
+          }
+          cell.identifier = identifier;
+          cell.addEventListener('click', set);
+          row.appendChild(cell);
+          boxes.push(cell);
+          identifier += identifier;
+        }
+      }
+    
+      document.getElementById('tictactoe').appendChild(board);
+      startNewGame();
+    }
+    
+    //Starting
+
+    function startNewGame() {
+      score = {
+        'X': 0,
+        'O': 0
+      };
+      moves = 0;
+      turn = 'X';
+      boxes.forEach(function (square) {
+        square.innerHTML = EMPTY;
+      });
+    }
+    
+    //vicotry controll
+    
+    function win(clicked) {
+      
+      var memberOf = clicked.className.split(/\s+/);
+      for (var i = 0; i < memberOf.length; i++) {
+        var testClass = '.' + memberOf[i];
+        var items = contains('#tictactoe ' + testClass, turn);
+      
+        if (items.length == N_SIZE) {
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    //Helper function to check if NodeList from selector has a particular text
+     
+    function contains(selector, text) {
+      var elements = document.querySelectorAll(selector);
+      return [].filter.call(elements, function (element) {
+        return RegExp(text).test(element.textContent);
+      });
+    }
+    
+    //Sets clicked square and also updates the turn.
+     
+    function set() {
+      if (this.innerHTML !== EMPTY) {
+        return;
+      }
+      this.innerHTML = turn;
+      moves += 1;
+      score[turn] += this.identifier;
+      if (win(this)) {
+        alert('Winner: Player ' + turn);
+        startNewGame();
+      } else if (moves === N_SIZE * N_SIZE) {
+        alert('Draw');
+        startNewGame();
+      } else {
+        turn = turn === 'X' ? 'O' : 'X';
+        document.getElementById('turn').textContent = 'Player ' + turn;
+      }
+    }
+    init();
+    }
+
+// function to get some wise words for inspiration (key is a private one)
+
+function getQuote(){
+    const quote_container =document.getElementById("quote");
+       
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '35f5683049msh795dd4b8038ee63p1e6a82jsn83d77e6e6bfa',
+            'X-RapidAPI-Host': 'quotes15.p.rapidapi.com'
+        }
+    };
+    fetch('https://quotes15.p.rapidapi.com/quotes/random/', options)
+    .then(response => response.json())
+        .then(data=>  obj = data)
+        .then(() => console.log(obj))
+        .then(() => document.getElementById("quote").innerHTML = obj.content)
+        .then(() => document.getElementById("author").innerHTML = obj.originator.name)
+        .catch(err => console.error(err));
+    }
+   </script>  
+    <script type="module" src="/static/js/index.js"></script>
+        <!frontend url entry point, clientside> 
+</body>
+</html>
